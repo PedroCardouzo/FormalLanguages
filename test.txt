@@ -3,17 +3,21 @@
 [ b ]							# Os simbolos terminais sao qualquer sequencia de caracteres (nao reservados) entre colchetes.
 [ u ]							# A secao de simbolos terminais inicia com a palavra-chave "Terminais"
 [ v ]
+[ erroo ]
 #Variaveis						# A secao de variaveis inicia pela palavra reservada "Variaveis", e eh a segunda do arquivo
 [ S ]							# Eh muito importante respeitar a ordem das secoes
 [ Z ]							# Note que a sintaxe eh case-sensitive, isto eh, maiusculas e minusculas sao diferenciadas
 [ B ]
 [ X ]
+[ N_TERM ]
+[ N_ACHIEV ]
 [ Y ]
 [ A ]
 #Inicial						# O simbolo inicial possui uma secao propria, iniciada pela palavra "Inicial"
 [ S ]							# Essa secao possui apenas uma linha com o simbolo inicial entre colchetes.
 #Regras							# A ultima secao vem encabecada pela palavra-chave "Regras"
 [ S ] > [ X ] [ Y ] [ Z ]		# O simbolo de ">" representa a derivacao.
+[ S ] > [ X ] [ N_TERM ]
 [ A ] > [ a ]
 [ B ] > [ b ]
 [ X ] > [ A ] [ X ] [ A ]		# Os simbolos da direita estão cada um entre colchetes e separados por espacos.
@@ -22,8 +26,13 @@
 [ X ] > [ V ]					# V eh a palavra vazia.
 [ Y ] > [ A ] [ Y ] [ B ]
 [ Y ] > [ B ] [ Y ] [ A ]
+
 [ Y ] > [ Z ]
 [ Y ] > [ V ] 
-[ Z ] > [ Z ] [ u ] 
-[ Z ] > [ Z ] [ v ]
+[ N_TERM ] > [ N_TERM ] [ A ]    # this wont generate a terminal ever (will always have N_TERM)
+[ N_ACHIEV ] > [ a ]			# this wont be achievable
+[ N_ACHIEV ] > [ erroo ]		# this wont be achievable
+[ Z ] > [ u ] 
+[ Z ] > [ v ]
 [ Z ] > [ V ]
+
