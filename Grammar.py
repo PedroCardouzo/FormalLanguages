@@ -37,9 +37,9 @@ class Grammar:
         return str_buffer
 
     def read_grammar_from_file(self, filepath):
-        buffer = []  # the 4 buffer slots
+        buffer = []  # buffer slots
         buffer_pos = (a for a in range(0, 4))  # there are 4 elements that define a grammar
-        with open(filepath, 'r') as file:
+        with open(filepath, 'r', encoding='UTF-8-sig') as file:  # this removes special UTF-8 encoding "ï»¿"
             for line in file:
                 if line[0] == '#':
                     i = next(buffer_pos)
