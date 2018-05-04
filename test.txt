@@ -11,6 +11,9 @@
 [ X ]
 [ N_TERM ]
 [ N_ACHIEV ]
+[ F ]
+[ G ]
+[ H ]
 [ Y ]
 [ A ]
 #Inicial						# O simbolo inicial possui uma secao propria, iniciada pela palavra "Inicial"
@@ -18,6 +21,9 @@
 #Regras							# A ultima secao vem encabecada pela palavra-chave "Regras"
 [ S ] > [ X ] [ Y ] [ Z ]		# O simbolo de ">" representa a derivacao.
 [ S ] > [ X ] [ N_TERM ]
+
+[ S ] > [ F ]
+
 [ A ] > [ a ]
 [ B ] > [ b ]
 [ X ] > [ A ] [ X ] [ A ]		# Os simbolos da direita estão cada um entre colchetes e separados por espacos.
@@ -26,6 +32,11 @@
 [ X ] > [ V ]					# V eh a palavra vazia.
 [ Y ] > [ A ] [ Y ] [ B ]
 [ Y ] > [ B ] [ Y ] [ A ]
+
+[ F ] > [ G ]
+[ G ] > [ H ]
+[ H ] > [ V ]
+
 
 [ Y ] > [ Z ]
 [ Y ] > [ V ] 

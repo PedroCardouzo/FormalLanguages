@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-# Rule = 2-uple (Char, String) | each char from String belongs to terminals or variables
+# Rule = 2-uple (String, [String]) | each char from String belongs to terminals or variables
 Rule = namedtuple('Rule', ['head', 'tail'])
 
 
@@ -86,11 +86,68 @@ class Grammar:
             new_rule = Rule(extract_symbol(head), generated_symbols)
             self.rules.append(new_rule)
 
+    def is_empty_rule(self, rule_tail):
+        for symbol in rule_tail:
+            if symbol != self.empty_symbol:
+                return False
+
+        return True
+
     def minimize(self):
         # check if it would generate empty symbol then add it at the end
-        # self.remove_empty_productions()
+        self.remove_empty_productions()
         # self.remove_ nome que nao sei ainda A -> B or A -> C or A -> A
         self.remove_useless_symbols()
+
+    def remove_empty_productions(self):
+        loop_again = True
+        variables_that_generate_empty = self.get_variables_that_gen_empty()
+
+        if self.initial in variables_that_generate_empty:
+            add_empty_rule = True
+
+        self.rules = [rule for rule in self.rules if not self.is_empty_rule(rule.tail)]
+        new_rules = []
+        while(loop_again):
+            loop_again = False
+            for variable in variables_that_generate_empty:
+                for rule in self.rules:
+                    new_tail = [symbol for symbol in rule.tail if symbol != variable]
+                    # if combination must be made, self.generate_all_new_rules(rule, variable) -> returns multiple rules
+                    # XaX -> [aX, Xa, a]
+
+                    if new_tail != []:
+                        new_rules.append(Rule(rule.head, new_tail))
+                        loop_again = True
+
+            self.rules = new_rules
+
+        # add empty string if it belonged to the grammar before
+        if add_empty_rule:
+            self.rules.apend(Rule(self.initial, [self.empty_symbol]))
+
+## checar se as regras sao removidas na etapa 2 1 por 1 (XaX -> aX e Xa -> aX, Xa, a
+
+
+    def get_variables_that_gen_empty(self, variables_gen_empty=[]):
+        recursive_call = False
+
+        if variables_gen_empty == []:
+            variables_gen_empty = [rule.head for rule in self.rules if self.empty_symbol in rule.tail]
+
+        buffer = []
+        # dont check rules from variables that are already confirmed to generate empty string
+        rules_to_check = [rule for rule in self.rules if rule.head not in variables_gen_empty]
+
+        for (head, tail) in rules_to_check:
+            if len(tail) == 1 and tail[0] in variables_gen_empty:  # tail must contain only 1 variable
+                buffer.append(head)
+                recursive_call = True
+
+        if recursive_call:
+            return self.get_variables_that_gen_empty(variables_gen_empty + buffer)
+        else:
+            return variables_gen_empty + buffer
 
     def remove_useless_symbols(self):
 
@@ -191,9 +248,6 @@ def main():
     filename = 'test.txt'  # input()
     grammar = Grammar()
     grammar.read_grammar_from_file(filename)
-    print(grammar)
-    print('\n\n')
-    print('\n\n')
     grammar.minimize()
     print(grammar)
 
