@@ -124,7 +124,7 @@ class Grammar:
 
         # add empty string if it belonged to the grammar before
         if add_empty_rule:
-            self.rules.apend(Rule(self.initial, [self.empty_symbol]))
+            self.rules.append(Rule(self.initial, [self.empty_symbol]))
 
 ## checar se as regras sao removidas na etapa 2 1 por 1 (XaX -> aX e Xa -> aX, Xa, a
 
