@@ -22,7 +22,7 @@ class Grammar:
         terminals_string = ', '.join(self.terminals) # ['X', 'Y', 'Z'] -> 'X, Y, Z'
         variables_string = ', '.join(self.variables) # ['a', 'b', 'c'] -> 'a, b, c'
         rules_string = self.__str_rules__()
-        return 'G = ({' + terminals_string + '}, {' + variables_string + '}, P, ' + self.initial + ')\nP = {\n' + rules_string + '}'
+        return 'G = ({' + variables_string + '}, {' + terminals_string + '}, P, ' + self.initial + ')\nP = {\n' + rules_string + '}'
 
     def __str_rules__(self):
         str_buffer = ''
