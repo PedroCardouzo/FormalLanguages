@@ -19,21 +19,29 @@ class Grammar:
         # P = {
         #     rules
         # }
-        terminals_string = ', '.join(self.terminals)  # ['a', 'b', 'c'] -> 'a, b, c'
-        variables_string = ', '.join(self.variables)  # ['X', 'Y', 'Z'] -> 'X, Y, Z'
-        rules_string = self.__str_rules__()
-        return 'G = ({' + variables_string + '}, {' + terminals_string + '}, P, ' + self.initial + ')\nP = {\n' + rules_string + '}'
+        terminals = list(self.terminals)
+        variables = list(self.variables)
+        terminals.sort()
+        variables.sort()
+        # places the initial variable first
+        variables = [self.initial] + [var for var in variables if var != self.initial]
 
-    def __str_rules__(self):
+        terminals_string = ', '.join(terminals)  # ['a', 'b', 'c'] -> 'a, b, c'
+        variables_string = ', '.join(variables)  # ['X', 'Y', 'Z'] -> 'X, Y, Z'
+        rules_string = self.__str_rules__(variables)
+        return 'G = ({' + variables_string + '}, {' + terminals_string + '}, P, '\
+               + self.initial + ')\nP = {\n' + rules_string + '}'
+
+    def __str_rules__(self, variables):
         str_buffer = ''
-        for variable in self.variables:
-            rules_for_variable = filter(lambda x: x.head == variable, self.rules)  # filter for only one variable
-            rules_for_variable = map(lambda x: x.tail, rules_for_variable)  # extract only the rules
-
+        for variable in variables:
+            rules_for_variable = [x.tail for x in self.rules if x.head == variable]
             rules_for_variable = [' '.join(single_rule) for single_rule in rules_for_variable]
 
-            str_buffer += '\t' + variable + ' -> ' + ' | '.join(
-                rules_for_variable) + '\n'  # return the formatted rule generation
+
+            str_buffer += '\t' + variable + ' -> ' + ' | '.join(rules_for_variable) + '\n'
+
+        # return the formatted rule generation
         return str_buffer
 
     def read_grammar_from_file(self, filepath):
@@ -53,12 +61,6 @@ class Grammar:
         self.generate_variables(buffer[1])
         self.generate_initial(buffer[2])
         self.generate_rules(buffer[3])
-
-        # self.sort_grammar()
-
-    def sort_grammar(self):
-        self.sort_variables()  # so we can print in a more organized way
-        self.terminals.sort()
 
     def sort_variables(self):  # sort but let initial variable @ position 1 in variables list
         self.variables.remove(self.initial)
@@ -244,7 +246,6 @@ class Grammar:
                 return False
 
         return True
-
 
 def extract_symbol(encoded_symbol):
     return ''.join([c for c in encoded_symbol if c not in ' []'])  # pick every char except if char is ' ' or '[' or ']'
