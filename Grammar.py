@@ -54,7 +54,7 @@ class Grammar:
         self.generate_initial(buffer[2])
         self.generate_rules(buffer[3])
 
-        #self.sort_grammar()
+        # self.sort_grammar()
 
     def sort_grammar(self):
         self.sort_variables()  # so we can print in a more organized way
@@ -95,9 +95,9 @@ class Grammar:
 
     def minimize(self):
         # check if it would generate empty symbol then add it at the end
-        self.remove_empty_productions()
+        # self.remove_empty_productions()
         # self.remove_ nome que nao sei ainda A -> B or A -> C or A -> A
-        # self.remove_useless_symbols()
+        self.remove_useless_symbols()
 
     def remove_empty_productions(self):
 
@@ -107,15 +107,15 @@ class Grammar:
 
         self.rules = {rule for rule in self.rules if not self.is_empty_rule(rule.tail)}
 
+        # in each loop the rules will include more and more newly generated rules
         for variable in variables_that_generate_empty:
-           self.rules = self.derivate_rules(variable)
+            self.rules = self._derivate_rules(variable)
 
         # add empty string if it belonged to the grammar before
         if add_empty_rule:
             self.rules.add(Rule(self.initial, tuple(self.empty_symbol)))
 
-## checar se as regras sao removidas na etapa 2 1 por 1 (XaX -> aX e Xa -> aX, Xa, a
-
+    ## checar se as regras sao removidas na etapa 2 1 por 1 (XaX -> aX e Xa -> aX, Xa, a
 
     def get_variables_that_gen_empty(self, variables_gen_empty=[]):
         recursive_call = False
@@ -129,6 +129,8 @@ class Grammar:
 
         for (head, tail) in rules_to_check:
             if len(tail) == 1 and tail[0] in variables_gen_empty:  # tail must contain only 1 variable
+                #  todo this will be the place where it will be changed to check for A -> BC where B and C gen empty
+                # todo and include it in the variables_gen_empty
                 buffer.append(head)
                 recursive_call = True
 
@@ -137,17 +139,18 @@ class Grammar:
         else:
             return variables_gen_empty + buffer
 
-    def derivate_rules(self, variable):
-        return self._derivate_rules(variable, set(), self.rules)
-
-    def _derivate_rules(self, variable, acc_rules, new_rules):
+    def _derivate_rules(self, variable, acc_rules=set(), new_rules=None):
         rules_buffer = set()
+
+        if new_rules is None:
+            new_rules = self.rules.copy()
 
         for head, rule_tail in new_rules:
             index_to_remove = [i for i, symbol in enumerate(rule_tail) if symbol == variable]
 
             if index_to_remove == []:
-                acc_rules.add(Rule(head, rule_tail))  # the rule_tail can no longer be divided, therefore, just add it to the buffer
+                acc_rules.add(Rule(head, rule_tail))
+                # the rule_tail can no longer be divided, therefore, just add it to the accumulator we will return later
             else:
                 for i in index_to_remove:
                     rules_buffer.add(Rule(head, rule_tail[:i] + rule_tail[i + 1:]))
@@ -163,56 +166,70 @@ class Grammar:
 
         # clear variables that don't achieve a terminal
         # have to send a copy otherwise the terminals themselves will be altered
-        self.variables = self._achieve_terminals(self.terminals.copy())
+        # obs.: empty symbol is also a terminal
+        self.variables = self._achieve_terminals(self.terminals.copy() | {self.empty_symbol})
 
         # clear symbols that can't be achieved through the initial variable
-        achievable_symbols = self._filter_achievable_symbols([])
+        achievable_symbols = self._filter_achievable_symbols()
 
-        self.variables = [x for x in achievable_symbols if x in self.variables]
-        self.terminals = [x for x in achievable_symbols if x in self.terminals]
+        self.variables = {x for x in achievable_symbols if x in self.variables}
+        self.terminals = {x for x in achievable_symbols if x in self.terminals}
 
         # remove rules that became useless
-        self.rules = [rule for rule in self.rules if rule.head in self.variables and self.is_useful_rule(rule)]
+        self.rules = {rule for rule in self.rules if rule.head in self.variables and self.is_valid_rule(rule)}
 
     # clear variables that don't achieve a terminal
     def _achieve_terminals(self, target_symbols):
         recursive_call = False
-        for (generator, rule) in self.rules:
+        for (generator_symbol, rule_tail) in self.rules:
             add = True
-            for symbol in rule:
-                if symbol not in target_symbols or generator in target_symbols:
+            for symbol in rule_tail:
+
+                reaches_terminal = symbol in target_symbols
+                is_new_symbol = generator_symbol not in target_symbols
+
+                if not reaches_terminal or not is_new_symbol:
                     add = False
                     break  # if add is set as False we know that this rule will not be added so we can stop the loop
 
+            # todo this:
+            # stack overflow when remove_empty_productions is active
+            # as of right know, remove_empty_productions is leaving some X -> () which
+            # will get out of the "for symbol in rule_tail" without setting add to False
+            # need to check what we will do with this in remove_empty_productions first to see what we do here
             if add:
-                target_symbols.append(generator)
+                target_symbols.add(generator_symbol)
                 recursive_call = True
 
         if recursive_call:
             return self._achieve_terminals(target_symbols)
         else:
-            return [x for x in target_symbols if x not in self.terminals]
+            # empty symbol was added to the set, therefore we have to remove it
+            target_symbols.remove(self.empty_symbol)
+            return {x for x in target_symbols if x not in self.terminals}
+
             # up until now the terminals were in the target_symbols, but this function must return
             # variables only, therefore we must filter them out here
 
-    def _filter_achievable_symbols(self, achieved_symbols, new_achievable_symbols=[]):
+    def _filter_achievable_symbols(self, achieved_symbols=set(), new_achievable_symbols=None):
 
-        if not new_achievable_symbols:  # the only symbol achievable by default is the initial
-            new_achievable_symbols = [self.initial]
+        if new_achievable_symbols is None:  # the only symbol achievable by default is the initial
+            new_achievable_symbols = {self.initial}
 
         recursive_call = False
-        new_symbols_buffer = []  # just a buffer for the soon to be new symbols
+        new_symbols_buffer = set()  # just a buffer for the soon to be new symbols
 
         # new_achievable_symbols is only separated so that we don't go over the symbols we have already gone through
         # however, they are already symbols that have been achieved so we can add them to achieved_symbols
-        achieved_symbols += new_achievable_symbols
+        achieved_symbols = achieved_symbols | new_achievable_symbols
         for generator in new_achievable_symbols:
             rules_for_generator = [rule.tail for rule in self.rules if rule.head == generator]
             for rule_tail in rules_for_generator:
                 for symbol in rule_tail:
                     # new symbols are separated into another variable for efficiency purposes
+                    # we dont want to go over everyone we already tested, just the new added symbols
                     if symbol not in new_symbols_buffer and symbol not in achieved_symbols:
-                        new_symbols_buffer.append(symbol)
+                        new_symbols_buffer.add(symbol)
                         recursive_call = True
 
         if recursive_call:  # loop only over the newly achieved symbols
@@ -220,10 +237,10 @@ class Grammar:
         else:
             return achieved_symbols
 
-    def is_useful_rule(self, rule):
+    def is_valid_rule(self, rule):
 
         for symbol in rule.tail:
-            if symbol not in self.variables and symbol not in self.terminals:
+            if symbol not in self.variables and symbol not in self.terminals and symbol != self.empty_symbol:
                 return False
 
         return True
@@ -253,13 +270,12 @@ def clean_line(string, stop_char):
 # cleanLine('addpowadwapkdwadda$ fhsoiejfsoi fsofjsojf es', '$') -> addpowadwapkdwadda$
 # cleanLine('#acawdowa', '$') -> ''
 
-
 def main():
     filename = 'test.txt'  # input()
     grammar = Grammar()
     grammar.read_grammar_from_file(filename)
     grammar.minimize()
-    # print(grammar)
+    print(grammar)
 
 
 if __name__ == '__main__':
