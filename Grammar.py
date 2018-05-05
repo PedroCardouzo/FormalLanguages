@@ -1,16 +1,16 @@
 from collections import namedtuple
 
-# Rule = 2-uple (String, [String]) | each char from String belongs to terminals or variables
+# Rule = 2-uple (String, [String]) | each String belongs to terminals or variables
 Rule = namedtuple('Rule', ['head', 'tail'])
 
 
 class Grammar:
 
     def __init__(self, empty_symbol='V'):
-        self.terminals = []
-        self.variables = []
+        self.terminals = set()
+        self.variables = set()
         self.initial = None
-        self.rules = []
+        self.rules = set()
         self.empty_symbol = empty_symbol  # 'V' is default for empty symbol
 
     def __str__(self):
@@ -19,8 +19,8 @@ class Grammar:
         # P = {
         #     rules
         # }
-        terminals_string = ', '.join(self.terminals)  # ['X', 'Y', 'Z'] -> 'X, Y, Z'
-        variables_string = ', '.join(self.variables)  # ['a', 'b', 'c'] -> 'a, b, c'
+        terminals_string = ', '.join(self.terminals)  # ['a', 'b', 'c'] -> 'a, b, c'
+        variables_string = ', '.join(self.variables)  # ['X', 'Y', 'Z'] -> 'X, Y, Z'
         rules_string = self.__str_rules__()
         return 'G = ({' + variables_string + '}, {' + terminals_string + '}, P, ' + self.initial + ')\nP = {\n' + rules_string + '}'
 
@@ -54,7 +54,7 @@ class Grammar:
         self.generate_initial(buffer[2])
         self.generate_rules(buffer[3])
 
-        self.sort_grammar()
+        #self.sort_grammar()
 
     def sort_grammar(self):
         self.sort_variables()  # so we can print in a more organized way
@@ -63,15 +63,15 @@ class Grammar:
     def sort_variables(self):  # sort but let initial variable @ position 1 in variables list
         self.variables.remove(self.initial)
         self.variables.sort()
-        self.variables = [self.initial] + self.variables
+        self.variables = {self.initial} + self.variables
 
     def generate_terminals(self, buffer):
         for encoded_symbol in buffer:
-            self.terminals.append(extract_symbol(encoded_symbol))
+            self.terminals.add(extract_symbol(encoded_symbol))
 
     def generate_variables(self, buffer):
         for encoded_symbol in buffer:
-            self.variables.append(extract_symbol(encoded_symbol))
+            self.variables.add(extract_symbol(encoded_symbol))
 
     def generate_initial(self, encoded_symbol):
         self.initial = extract_symbol(encoded_symbol[0])
@@ -81,10 +81,10 @@ class Grammar:
             head, tail = rule.split(' > ')
 
             tail = tail.split('] [')
-            generated_symbols = [extract_symbol(x) for x in tail]
+            generated_symbols = tuple([extract_symbol(x) for x in tail])
 
             new_rule = Rule(extract_symbol(head), generated_symbols)
-            self.rules.append(new_rule)
+            self.rules.add(new_rule)
 
     def is_empty_rule(self, rule_tail):
         for symbol in rule_tail:
@@ -97,34 +97,22 @@ class Grammar:
         # check if it would generate empty symbol then add it at the end
         self.remove_empty_productions()
         # self.remove_ nome que nao sei ainda A -> B or A -> C or A -> A
-        self.remove_useless_symbols()
+        # self.remove_useless_symbols()
 
     def remove_empty_productions(self):
-        loop_again = True
+
         variables_that_generate_empty = self.get_variables_that_gen_empty()
 
-        if self.initial in variables_that_generate_empty:
-            add_empty_rule = True
+        add_empty_rule = self.initial in variables_that_generate_empty
 
-        self.rules = [rule for rule in self.rules if not self.is_empty_rule(rule.tail)]
-        new_rules = []
-        while(loop_again):
-            loop_again = False
-            for variable in variables_that_generate_empty:
-                for rule in self.rules:
-                    new_tail = [symbol for symbol in rule.tail if symbol != variable]
-                    # if combination must be made, self.generate_all_new_rules(rule, variable) -> returns multiple rules
-                    # XaX -> [aX, Xa, a]
+        self.rules = {rule for rule in self.rules if not self.is_empty_rule(rule.tail)}
 
-                    if new_tail != []:
-                        new_rules.append(Rule(rule.head, new_tail))
-                        loop_again = True
-
-            self.rules = new_rules
+        for variable in variables_that_generate_empty:
+           self.rules = self.derivate_rules(variable)
 
         # add empty string if it belonged to the grammar before
         if add_empty_rule:
-            self.rules.apend(Rule(self.initial, [self.empty_symbol]))
+            self.rules.add(Rule(self.initial, tuple(self.empty_symbol)))
 
 ## checar se as regras sao removidas na etapa 2 1 por 1 (XaX -> aX e Xa -> aX, Xa, a
 
@@ -148,6 +136,28 @@ class Grammar:
             return self.get_variables_that_gen_empty(variables_gen_empty + buffer)
         else:
             return variables_gen_empty + buffer
+
+    def derivate_rules(self, variable):
+        return self._derivate_rules(variable, set(), self.rules)
+
+    def _derivate_rules(self, variable, acc_rules, new_rules):
+        rules_buffer = set()
+
+        for head, rule_tail in new_rules:
+            index_to_remove = [i for i, symbol in enumerate(rule_tail) if symbol == variable]
+
+            if index_to_remove == []:
+                acc_rules.add(Rule(head, rule_tail))  # the rule_tail can no longer be divided, therefore, just add it to the buffer
+            else:
+                for i in index_to_remove:
+                    rules_buffer.add(Rule(head, rule_tail[:i] + rule_tail[i + 1:]))
+
+            acc_rules = acc_rules | new_rules
+
+        if rules_buffer == set():  # buffer is empty?
+            return acc_rules
+        else:
+            return self._derivate_rules(variable, acc_rules, rules_buffer)
 
     def remove_useless_symbols(self):
 
@@ -249,7 +259,7 @@ def main():
     grammar = Grammar()
     grammar.read_grammar_from_file(filename)
     grammar.minimize()
-    print(grammar)
+    # print(grammar)
 
 
 if __name__ == '__main__':
