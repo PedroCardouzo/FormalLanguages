@@ -256,12 +256,15 @@ class Grammar:
         for any variables A, B and C, and any string alpha of terminals
         or variables that isn't comprised of a single variable.
         '''
+        # --------- begin is_unit_production ---------
         def is_unit_production(rule):
             if len(rule.tail) == 1 and rule.tail[0] in self.variables:
                     return True
             else:
                 return False
+        # --------- end is_unit_production ---------
 
+        # --------- begin variable_unit_closure ---------
         def variable_unit_closure(v):
             def immediate_unit_closure(v):
                 unit_productions_of_v = \
@@ -288,6 +291,7 @@ class Grammar:
                 visited[u] = True
 
             return unit_closure_v
+        # --------- end variable_unit_closure ---------
         
         # Start off with all original non-unitary rules
         new_rules = {rule for rule in self.rules if not is_unit_production(rule)}
