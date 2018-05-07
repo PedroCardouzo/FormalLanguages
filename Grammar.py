@@ -1,5 +1,6 @@
 from collections import namedtuple
 from collections import deque # used for BFS in Grammar.remove_unit_productions
+import sys # for command-line arguments
 
 # Rule = 2-uple (String, [String]) | each String belongs to terminals or variables
 Rule = namedtuple('Rule', ['head', 'tail'])
@@ -332,7 +333,11 @@ def clean_line(string, stop_char):
 # cleanLine('#acawdowa', '$') -> ''
 
 def main():
-    filename = 'test.txt'  # input()
+    filename = 'test.txt' # default filename
+
+    if len(sys.argv) == 2:
+        filename = sys.argv[1]
+
     grammar = Grammar()
     grammar.read_grammar_from_file(filename)
     print('Grammar before minimization:')
