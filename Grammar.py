@@ -99,8 +99,6 @@ class Grammar:
     def minimize(self):
         # check if it would generate empty symbol then add it at the end
         #self.remove_empty_productions()
-        # self.remove_empty_productions()
-        # self.remove_ nome que nao sei ainda A -> B or A -> C or A -> A
         self.remove_unit_productions()
         #self.remove_useless_symbols()
 
@@ -252,9 +250,11 @@ class Grammar:
 
     def remove_unit_productions(self):
         ''' 
-        Remove rules of the form A->B.
+        Remove rules of the form A->B, creating rules A->alpha
+        if B->C is a unit rule  and C->alpha is a non-unit rule,
+        for any variables A, B and C, and any string alpha of terminals
+        or variables that isn't comprised of a single variable.
         '''
-
         def is_unit_production(rule):
             if len(rule.tail) == 1 and rule.tail[0] in self.variables:
                     return True
@@ -287,9 +287,23 @@ class Grammar:
                 visited[u] = True
 
             return unit_closure_v
+        
+        # Start off with all original non-unitary rules
+        new_rules = {rule for rule in self.rules if not is_unit_production(rule)}
 
+        # For every variable V and for every other variable U in V's unit-closure,
+        # if U is the head of some non-unit production P,
+        # create a new rule headed by V, but with the tail originally produced by U
         for v in self.variables:
-            print('Unit closure of ', v, ': ', variable_unit_closure(v))
+            for u in variable_unit_closure(v):
+                non_unit_rules_of_u = {rule for rule in self.rules if \
+                                       rule.head == u and \
+                                       not is_unit_production(rule)}
+                new_rules = new_rules.union( {Rule(v, rule.tail) for rule in non_unit_rules_of_u} )
+       
+        # Finally assign the newly created set of rules 
+        # to that of the grammar
+        self.rules = new_rules
 
 
 
@@ -318,10 +332,14 @@ def clean_line(string, stop_char):
 # cleanLine('#acawdowa', '$') -> ''
 
 def main():
-    filename = 'test_removal_unit_productions.txt'  # input()
+    filename = 'test.txt'  # input()
     grammar = Grammar()
     grammar.read_grammar_from_file(filename)
+    print('Grammar before minimization:')
+    print(grammar)
+
     grammar.minimize()
+    print('Grammar after minimization')
     print(grammar)
 
 
