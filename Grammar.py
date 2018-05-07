@@ -1,4 +1,6 @@
 from collections import namedtuple
+from collections import deque # used for BFS in Grammar.remove_unit_productions
+import sys # for command-line arguments
 
 # Rule = 2-uple (String, [String]) | each String belongs to terminals or variables
 Rule = namedtuple('Rule', ['head', 'tail'])
@@ -97,9 +99,9 @@ class Grammar:
 
     def minimize(self):
         # check if it would generate empty symbol then add it at the end
-        # self.remove_empty_productions()
-        # self.remove_ nome que nao sei ainda A -> B or A -> C or A -> A
-        self.remove_useless_symbols()
+        #self.remove_empty_productions()
+        self.remove_unit_productions()
+        #self.remove_useless_symbols()
 
     def remove_empty_productions(self):
 
@@ -247,6 +249,69 @@ class Grammar:
 
         return True
 
+    def remove_unit_productions(self):
+        ''' 
+        Remove rules of the form A->B, creating rules A->alpha
+        if B->C is a unit rule  and C->alpha is a non-unit rule,
+        for any variables A, B and C, and any string alpha of terminals
+        or variables that isn't comprised of a single variable.
+        '''
+        # --------- begin is_unit_production ---------
+        def is_unit_production(rule):
+            if len(rule.tail) == 1 and rule.tail[0] in self.variables:
+                    return True
+            else:
+                return False
+        # --------- end is_unit_production ---------
+
+        # --------- begin variable_unit_closure ---------
+        def variable_unit_closure(v):
+            def immediate_unit_closure(v):
+                unit_productions_of_v = \
+                    [rule for rule in self.rules if \
+                     rule.head == v and is_unit_production(rule)]
+                return set(var for var in \
+                           [rule.tail[0] for rule in unit_productions_of_v])
+
+            # set of variables which we are to return
+            unit_closure_v = set() 
+
+            visited = dict((var, False) for var in self.variables)
+            queue = deque() # init queue
+            queue.append(v)
+
+            while queue:
+                u = queue.popleft()
+                # this is a graph BFS; we get u's adjacent nodes
+                immediate_closure_u = immediate_unit_closure(u)
+                for element in immediate_closure_u:
+                    if not visited[element]:
+                        unit_closure_v.update(element)
+                        queue.append(element)
+                visited[u] = True
+
+            return unit_closure_v
+        # --------- end variable_unit_closure ---------
+        
+        # Start off with all original non-unitary rules
+        new_rules = {rule for rule in self.rules if not is_unit_production(rule)}
+
+        # For every variable V and for every other variable U in V's unit-closure,
+        # if U is the head of some non-unit production P,
+        # create a new rule headed by V, but with the tail originally produced by U
+        for v in self.variables:
+            for u in variable_unit_closure(v):
+                non_unit_rules_of_u = {rule for rule in self.rules if \
+                                       rule.head == u and \
+                                       not is_unit_production(rule)}
+                new_rules = new_rules.union( {Rule(v, rule.tail) for rule in non_unit_rules_of_u} )
+       
+        # Finally assign the newly created set of rules 
+        # to that of the grammar
+        self.rules = new_rules
+
+
+
 def extract_symbol(encoded_symbol):
     return ''.join([c for c in encoded_symbol if c not in ' []'])  # pick every char except if char is ' ' or '[' or ']'
     # join function is used to join the characters form the generated list to a single string (list of char -> String)
@@ -272,10 +337,18 @@ def clean_line(string, stop_char):
 # cleanLine('#acawdowa', '$') -> ''
 
 def main():
-    filename = 'test.txt'  # input()
+    filename = 'test_grammars/test.txt' # default filename
+
+    if len(sys.argv) == 2:
+        filename = sys.argv[1]
+
     grammar = Grammar()
     grammar.read_grammar_from_file(filename)
+    print('Grammar before minimization:')
+    print(grammar)
+
     grammar.minimize()
+    print('Grammar after minimization')
     print(grammar)
 
 
