@@ -333,7 +333,7 @@ def clean_line(string, stop_char):
 # cleanLine('#acawdowa', '$') -> ''
 
 def main():
-    filename = 'test.txt' # default filename
+    filename = 'test_grammars/test.txt' # default filename
 
     if len(sys.argv) == 2:
         filename = sys.argv[1]
