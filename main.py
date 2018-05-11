@@ -17,12 +17,13 @@ def main():
         print('File ' + filename + ' could not be found inside grammars folder. Please check if name is correct.')
         sys.exit(1)
 
-    print('Grammar before minimization:')
     print(grammar)
 
-    grammar.minimize()
-    print('Grammar after minimization')
-    print(grammar)
+    # print('Grammar before minimization:')
+
+    # grammar.minimize()
+    # print('Grammar after minimization')
+    # print(grammar)
 
 
 if __name__ == '__main__':
