@@ -27,6 +27,7 @@
 [ A ] > [ a ]
 [ B ] > [ b ]
 [ X ] > [ A ] [ X ] [ A ]		# Os simbolos da direita estão cada um entre colchetes e separados por espacos.
+[ T ] > [ H ] [ F ] 
 [ X ] > [ B ] [ X ] [ B ]
 [ X ] > [ Z ]
 [ X ] > [ V ]					# V eh a palavra vazia.

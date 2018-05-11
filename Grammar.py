@@ -97,7 +97,7 @@ class Grammar:
 
     def minimize(self):
         # check if it would generate empty symbol then add it at the end
-        # self.remove_empty_productions()
+        self.remove_empty_productions()
         # self.remove_ nome que nao sei ainda A -> B or A -> C or A -> A
         self.remove_useless_symbols()
 
@@ -130,9 +130,8 @@ class Grammar:
         rules_to_check = [rule for rule in self.rules if rule.head not in variables_gen_empty]
 
         for (head, tail) in rules_to_check:
-            if len(tail) == 1 and tail[0] in variables_gen_empty:  # tail must contain only 1 variable
-                #  todo this will be the place where it will be changed to check for A -> BC where B and C gen empty
-                # todo and include it in the variables_gen_empty
+            # if every variable in tail is in variables_gen_empty, tail will generate empty
+            if self._will_produce_empty(tail, variables_gen_empty):
                 buffer.append(head)
                 recursive_call = True
 
@@ -141,9 +140,19 @@ class Grammar:
         else:
             return variables_gen_empty + buffer
 
+    def _will_produce_empty(self, tail, variables_gen_emtpy):
+        for symbol in tail:
+            if symbol not in variables_gen_emtpy:
+                return False
+
+        # tail is not empty? True : False
+        return tail is not ()
+
+
     def _derivate_rules(self, variable, acc_rules=set(), new_rules=None):
         rules_buffer = set()
 
+        # base case
         if new_rules is None:
             new_rules = self.rules.copy()
 
@@ -153,6 +162,7 @@ class Grammar:
             if index_to_remove == []:
                 acc_rules.add(Rule(head, rule_tail))
                 # the rule_tail can no longer be divided, therefore, just add it to the accumulator we will return later
+
             else:
                 for i in index_to_remove:
                     rules_buffer.add(Rule(head, rule_tail[:i] + rule_tail[i + 1:]))
@@ -160,7 +170,8 @@ class Grammar:
             acc_rules = acc_rules | new_rules
 
         if rules_buffer == set():  # buffer is empty?
-            return acc_rules
+            # return only the rules whose tail is not an empty tuple
+            return {rule for rule in acc_rules if rule.tail is not tuple()}
         else:
             return self._derivate_rules(variable, acc_rules, rules_buffer)
 
@@ -194,11 +205,6 @@ class Grammar:
                     add = False
                     break  # if add is set as False we know that this rule will not be added so we can stop the loop
 
-            # todo this:
-            # stack overflow when remove_empty_productions is active
-            # as of right know, remove_empty_productions is leaving some X -> () which
-            # will get out of the "for symbol in rule_tail" without setting add to False
-            # need to check what we will do with this in remove_empty_productions first to see what we do here
             if add:
                 target_symbols.add(generator_symbol)
                 recursive_call = True
