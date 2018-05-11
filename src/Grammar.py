@@ -351,19 +351,3 @@ def clean_line(string, stop_char):
 
 # cleanLine('addpowadwapkdwadda$ fhsoiejfsoi fsofjsojf es', '$') -> addpowadwapkdwadda$
 # cleanLine('#acawdowa', '$') -> ''
-
-def main():
-    filename = 'test_grammars/test.txt'  # default filename
-
-    grammar = Grammar()
-    grammar.read_grammar_from_file(filename)
-    print('Grammar before minimization:')
-    print(grammar)
-
-    grammar.minimize()
-    print('Grammar after minimization')
-    print(grammar)
-
-
-if __name__ == '__main__':
-    main()
