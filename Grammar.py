@@ -38,8 +38,8 @@ class Grammar:
             rules_for_variable = [x.tail for x in self.rules if x.head == variable]
             rules_for_variable = [' '.join(single_rule) for single_rule in rules_for_variable]
 
-
-            str_buffer += '\t' + variable + ' -> ' + ' | '.join(rules_for_variable) + '\n'
+            if rules_for_variable != []:
+                str_buffer += '\t' + variable + ' -> ' + ' | '.join(rules_for_variable) + '\n'
 
         # return the formatted rule generation
         return str_buffer
@@ -146,7 +146,7 @@ class Grammar:
                 return False
 
         # tail is not empty? True : False
-        return tail is not ()
+        return tail != ()
 
 
     def _derivate_rules(self, variable, acc_rules=set(), new_rules=None):
@@ -171,7 +171,7 @@ class Grammar:
 
         if rules_buffer == set():  # buffer is empty?
             # return only the rules whose tail is not an empty tuple
-            return {rule for rule in acc_rules if rule.tail is not tuple()}
+            return {rule for rule in acc_rules if rule.tail != tuple()}
         else:
             return self._derivate_rules(variable, acc_rules, rules_buffer)
 
