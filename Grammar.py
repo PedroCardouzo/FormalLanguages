@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-# Rule = 2-uple (String, [String]) | each String belongs to terminals or variables
+# Rule = 2-uple (String, (String,)) | each String belongs to terminals or variables
 Rule = namedtuple('Rule', ['head', 'tail'])
 
 
@@ -253,6 +253,15 @@ def extract_symbol(encoded_symbol):
 
 
 def clean_line(string, stop_char):
+    """
+            # clean_line :: String char -> String
+            Receives a String and a 'stop_char'.
+            Scans the string backwards and cuts at the first 'stop_char', returning the new String
+            ex:
+                clean_line("this is a # string", '#')  --> "this is a "
+                clean_line("[ X ] > [ V ]  # V eh a palavra vazia.", '#')  --> "[ X ] > [ V ]  "
+                clean_line("[ X ] > [ V ]  # V eh a # palavra vazia.", '#')  --> "[ X ] > [ V ]  # V eh a "
+    """
     pos = len(string) - 1
     cut_pos = 0
     stop_char_found = False
