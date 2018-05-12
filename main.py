@@ -1,12 +1,12 @@
 import sys
 from src.Grammar import *
-
+from src.ChomskyNormalForm import ChomskyNormalForm
 
 def main():
 
     # filename handling stuff
     file_folder = './grammars/'  # folder is test_grammars
-    filename = input('name of grammar file inside grammars (default = test.txt): ')
+    filename = ''  # input('name of grammar file inside grammars (default = test.txt): ')
     if filename == '':
         filename = 'test.txt'
 
@@ -24,6 +24,8 @@ def main():
     print('Grammar after minimization')
     print(grammar)
 
+    cnf = ChomskyNormalForm(grammar)
+    print(cnf)
 
 if __name__ == '__main__':
     main()
