@@ -4,12 +4,16 @@
 #Variaveis						# A secao de variaveis inicia pela palavra reservada "Variaveis", e eh a segunda do arquivo
 [ S ]
 [ X ]
+[ Y ]
 #Inicial						# O simbolo inicial possui uma secao propria, iniciada pela palavra "Inicial"
 [ S ]							# Essa secao possui apenas uma linha com o simbolo inicial entre colchetes.
 #Regras							# A ultima secao vem encabecada pela palavra-chave "Regras"
 [ S ] > [ a ] [ X ] [ a ]
 [ S ] > [ b ] [ X ] [ b ]
+[ S ] > [ V ]
+
 [ X ] > [ a ]
 [ X ] > [ b ]
-[ X ] > [ S ]
-[ X ] > [ V ]
+
+[ X ] > [ Y ]
+[ Y ] > [ V ]
