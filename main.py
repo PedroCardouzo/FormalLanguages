@@ -4,13 +4,6 @@ from src.Grammar import *
 
 def main():
 
-    # Shell filename input is more
-    # convenient in enabling one to
-    # autocomplete as well as repeat
-    # previous inputs.
-    # It also enables usage of
-    # shell scripts for test automation.
-    # Leaving it as an option.
     if len(sys.argv) == 2:
         # If shell input is used,
         # it is assumed that the folder is 
