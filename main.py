@@ -28,8 +28,7 @@ def main():
     print('Grammar before minimization:')
     print(grammar)
 
-    #grammar.minimize()
-    grammar.remove_useless_symbols()
+    grammar.minimize()
     print('Grammar after minimization')
     print(grammar)
 
