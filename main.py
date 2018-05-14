@@ -1,6 +1,5 @@
 import sys
 from src.Grammar import *
-import sys
 
 
 def main():
