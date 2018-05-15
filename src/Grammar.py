@@ -9,6 +9,10 @@ Rule = namedtuple('Rule', ['head', 'tail'])
 class Grammar:
 
     def __init__(self, empty_symbol='V'):
+        """
+            # __init__ ::
+            Initilizes variables
+        """
         self.terminals = set()
         self.variables = set()
         self.initial = None
@@ -16,6 +20,15 @@ class Grammar:
         self.empty_symbol = empty_symbol  # 'V' is default for empty symbol
 
     def __str__(self):
+        """
+            # __str__ ::  --> 
+            Uses self to access state
+            
+
+
+        """
+        
+        
         # will print formal grammar definition in this style:
         # G = ({S, A, B, C}, {a, b}, P, S)
         # P = {
@@ -35,6 +48,11 @@ class Grammar:
                + self.initial + ')\nP = {\n' + rules_string + '}'
 
     def __str_rules__(self, variables):
+        """
+            # __str_rules__ ::  -->
+            Used for rules printing in the screen in an easier way for future reading
+
+        """
         str_buffer = ''
         for variable in variables:
             rules_for_variable = [x.tail for x in self.rules if x.head == variable]
@@ -47,6 +65,11 @@ class Grammar:
         return str_buffer
 
     def read_grammar_from_file(self, filepath):
+        """
+                # read_grammar_from_file :: String ->
+                Receives the filepath with its folder and puts each part of the input text on its own slot of the
+                buffer so that afterwards we generate variables, terminals and rules.
+        """
         buffer = []  # buffer slots
         buffer_pos = (a for a in range(0, 4))  # there are 4 elements that define a grammar
         with open(filepath, 'r', encoding='UTF-8-sig') as file:  # this removes special UTF-8 encoding "ï»¿"
@@ -65,22 +88,42 @@ class Grammar:
         self.generate_rules(buffer[3])
 
     def sort_variables(self):  # sort but let initial variable @ position 1 in variables list
+        """
+                # Sort variables ::
+                Sorts variables set so that when we print them they are ordenated
+        """
         self.variables.remove(self.initial)
         self.variables.sort()
         self.variables = {self.initial} + self.variables
 
     def generate_terminals(self, buffer):
+        """
+                # generate_terminals ::  [chars] -->
+                Reads information from buffer and puts them in self.terminals
+        """
         for encoded_symbol in buffer:
             self.terminals.add(extract_symbol(encoded_symbol))
 
     def generate_variables(self, buffer):
+        """
+                # generate_variables ::  [chars] -->
+                Reads information from buffer and puts them in self.variables
+        """
         for encoded_symbol in buffer:
             self.variables.add(extract_symbol(encoded_symbol))
 
     def generate_initial(self, encoded_symbol):
+        """
+                # generate_initial ::  char -->
+                Reads char from buffer and sets as initial variable
+        """
         self.initial = extract_symbol(encoded_symbol[0])
 
     def generate_rules(self, buffer):
+        """
+                # generate_rules ::  [chars] -->
+                Reads information from buffer and puts them in 'self.rules' as a tuple
+        """
         for rule in buffer:
             head, tail = rule.split(' > ')
 
@@ -91,6 +134,10 @@ class Grammar:
             self.rules.add(new_rule)
 
     def is_empty_rule(self, rule_tail):
+        """
+                # is_empty_rule ::  {chars} -->
+                Checks if a rule tail is an empty symbol (pattern: V)
+        """
         for symbol in rule_tail:
             if symbol != self.empty_symbol:
                 return False
@@ -98,6 +145,9 @@ class Grammar:
         return True
 
     def minimize(self):
+        """
+            Minimizes
+        """
         # check if it would generate empty symbol then add it at the end
 
         self.remove_empty_productions()
@@ -105,7 +155,10 @@ class Grammar:
         self.remove_useless_symbols()
 
     def remove_empty_productions(self):
-
+        """
+                # remove_empty_productions ::
+                Removes empty productions from 'self.rules'
+        """
         variables_that_generate_empty = self.get_variables_that_gen_empty()
 
         add_empty_rule = self.initial in variables_that_generate_empty
@@ -120,9 +173,11 @@ class Grammar:
         if add_empty_rule:
             self.rules.add(Rule(self.initial, tuple(self.empty_symbol)))
 
-    ## checar se as regras sao removidas na etapa 2 1 por 1 (XaX -> aX e Xa -> aX, Xa, a
-
     def get_variables_that_gen_empty(self, variables_gen_empty=[]):
+        """
+                # get_variables_that_gen_empty ::
+                Checks which variables can make an empty production. This function is used in remove_empty_productions
+        """
         recursive_call = False
 
         if variables_gen_empty == []:
@@ -144,13 +199,17 @@ class Grammar:
             return variables_gen_empty + buffer
 
     def _will_produce_empty(self, tail, variables_gen_emtpy):
+        """
+                # _will_produce_empty ::     --> Boolean
+                Checks in a set of chars if any of the productions of 'tail' is an empty production.
+                Used in get_variables_that_gen_empt
+        """
         for symbol in tail:
             if symbol not in variables_gen_emtpy:
                 return False
 
         # tail is not empty? True : False
         return tail != ()
-
 
     def _derivate_rules(self, variable, acc_rules=set(), new_rules=None):
         rules_buffer = set()
@@ -179,7 +238,13 @@ class Grammar:
             return self._derivate_rules(variable, acc_rules, rules_buffer)
 
     def remove_useless_symbols(self):
+        """
+            # remove_useless_symbols ::
+            Removes useless symbols in the grammar. Looks for variables that can't be achieved and erases them. Looks for
+            terminals that can't be achieved and erases them. And then, removes rules that became useless.
 
+
+        """
         # clear variables that don't achieve a terminal
         # have to send a copy otherwise the terminals themselves will be altered
         # obs.: empty symbol is also a terminal
@@ -223,7 +288,13 @@ class Grammar:
             # variables only, therefore we must filter them out here
 
     def _filter_achievable_symbols(self, achieved_symbols=set(), new_achievable_symbols=None):
+        """
+            # _filter_achievable_symbols :: symbols --> [symbols]
+            This function receives a symbol and return a set of all symbols that can be achieved by that symbol
+            ex:
 
+
+        """
         if new_achievable_symbols is None:  # the only symbol achievable by default is the initial
             new_achievable_symbols = {self.initial}
 
@@ -249,7 +320,13 @@ class Grammar:
             return achieved_symbols
 
     def is_valid_rule(self, rule):
+        """
+            # is_valid_rule :: head, [tail]-> boolean
+            Checks if 'rule' is a valid rule.
+            ex:
 
+
+        """
         for symbol in rule.tail:
             if symbol not in self.variables and symbol not in self.terminals and symbol != self.empty_symbol:
                 return False
@@ -317,12 +394,18 @@ class Grammar:
         # to that of the grammar
         self.rules = new_rules
 
-
-
 def extract_symbol(encoded_symbol):
+    """
+        # extract_symbol :: [char]-> String
+        Receives a list of char and returns a string with the following chars removed: '[' and ']' and ' '.
+        ex:
+            extract_symbol(['[', 'H', ']']) --> H
+            extract_symbol(['[', 'H', ']', ' ', '[', 'B', ']']) --> H
+            extract_symbol('[][][][][][x][][][][]') --> x
+
+    """
     return ''.join([c for c in encoded_symbol if c not in ' []'])  # pick every char except if char is ' ' or '[' or ']'
     # join function is used to join the characters form the generated list to a single string (list of char -> String)
-
 
 def clean_line(string, stop_char):
     """
@@ -348,6 +431,3 @@ def clean_line(string, stop_char):
 
     return string[:cut_pos]
 
-
-# cleanLine('addpowadwapkdwadda$ fhsoiejfsoi fsofjsojf es', '$') -> addpowadwapkdwadda$
-# cleanLine('#acawdowa', '$') -> ''

@@ -1,4 +1,6 @@
-00275739 - Pedro Emilio Cardouzo
+﻿00275739 - Pedro Emilio Cardouzo
+00244113 - Giovani Chassot Simon
+00205685 - Alexandre dos Reis Saccol
 
 1. Coloque a gramática que deseja carregar no programa dentro da pasta grammars
 2. Execute o script main.py e digite o nome da gramática que deseja carregar
