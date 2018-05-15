@@ -305,14 +305,15 @@ class Grammar:
         # however, they are already symbols that have been achieved so we can add them to achieved_symbols
         achieved_symbols = achieved_symbols | new_achievable_symbols
         for generator in new_achievable_symbols:
-            rules_for_generator = [rule.tail for rule in self.rules if rule.head == generator]
-            for rule_tail in rules_for_generator:
-                for symbol in rule_tail:
-                    # new symbols are separated into another variable for efficiency purposes
-                    # we dont want to go over everyone we already tested, just the new added symbols
-                    if symbol not in new_symbols_buffer and symbol not in achieved_symbols:
-                        new_symbols_buffer.add(symbol)
-                        recursive_call = True
+            rules_for_generator = [rule for rule in self.rules if rule.head == generator]
+            for rule in rules_for_generator:
+                if self.is_valid_rule(rule):
+                    for symbol in rule.tail:
+                        # new symbols arte separated into another variable for efficiency purposes
+                        # we dont want to go over everyone we already tested, just the new added symbols
+                        if symbol not in new_symbols_buffer and symbol not in achieved_symbols:
+                            new_symbols_buffer.add(symbol)
+                            recursive_call = True
 
         if recursive_call:  # loop only over the newly achieved symbols
             return self._filter_achievable_symbols(achieved_symbols, new_symbols_buffer)
