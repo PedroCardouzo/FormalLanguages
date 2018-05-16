@@ -27,5 +27,6 @@ def main():
     cnf = ChomskyNormalForm(grammar)
     print(cnf)
 
+
 if __name__ == '__main__':
     main()
