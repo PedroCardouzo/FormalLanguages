@@ -1,18 +1,17 @@
 from src.Grammar import Grammar, Rule
 from copy import deepcopy
 
+CONST_VAR_NAMESPACE_SYMBOL = '&'
+CONST_TERM_NAMESPACE_SYMBOL = ':'
+
 class ChomskyNormalForm(Grammar):
 
-    def __str__(self):
-        return super().__str__()
-
-    def __init__(self, grammar):
+    def __init__(self, grammar, log=False):
 
         # remove empty rule from grammar as CNF doesn't have it
         super().__init__()
 
         grammar = deepcopy(grammar)  # make sure we have a copy of grammar
-        grammar.minimize()  # make sure that the grammar is minimized
 
         # check if empty_rule exists in grammar and removes it
         empty_rule = Rule(grammar.initial, tuple(grammar.empty_symbol))
@@ -24,12 +23,33 @@ class ChomskyNormalForm(Grammar):
         self.rules = grammar.rules
         self.initial = grammar.initial
         self.empty_symbol = None
+        self._log = log
 
         # creates variable generator for when we will make new variables for achieving Chomsky Normal Form
         self._variable_generator = self._alpha_gen()
 
+        self.minimize()  # make sure that the grammar is minimized
         self.generate_single_terminal()
         self.set_production_size_two()
+
+
+    def __str__(self):
+        return super().__str__()
+
+    def _sort_variables_for_print(self):
+        variables = list(self.variables)
+        variables.remove(self.initial)
+        variables.sort()
+
+        # get the first character that is not marked with special namespace
+        i = 0
+        for v in variables:
+            if v[0] != CONST_VAR_NAMESPACE_SYMBOL and v[0] != CONST_TERM_NAMESPACE_SYMBOL:
+                break
+            else:
+                i += 1
+
+        return [self.initial] + variables[i:] + variables[:i]
 
     @staticmethod
     # _alpha_gen :: 'int -> <generator object> | 'type means argument is optional
@@ -41,9 +61,9 @@ class ChomskyNormalForm(Grammar):
             i = 'A'
             while i <= 'Z':
                 if j == 0:
-                    yield '$' + i
+                    yield CONST_VAR_NAMESPACE_SYMBOL + i
                 elif j < max_num:
-                    yield '$' + i + str(j)
+                    yield CONST_VAR_NAMESPACE_SYMBOL + i + str(j)
                 else:
                     raise StopIteration
                 i = chr(ord(i) + 1)  # get next character of alphabet
@@ -56,7 +76,7 @@ class ChomskyNormalForm(Grammar):
         return next(self._variable_generator)
 
     def generate_single_terminal(self):
-        temp_map = dict((term, ':'+term.upper()) for term in self.terminals)
+        temp_map = dict((term, CONST_TERM_NAMESPACE_SYMBOL+term.upper()) for term in self.terminals)
         used_maps = set()
 
         for rule in self.rules.copy():

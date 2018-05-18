@@ -9,7 +9,7 @@
 #Inicial					
 [ S ]						
 #Regras							
-[ S ] > [ A ] [ a ] [ d ] 	
+[ S ] > [ a ] [ A ] [ d ]
 [ S ] > [ A ] 
 
 [ A ] > [ B ] [ c ] 

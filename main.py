@@ -10,22 +10,18 @@ def main():
     if filename == '':
         filename = '4_d.txt'
 
-    grammar = Grammar()
+    grammar = Grammar(log=True)  # True is sent to 'log' as we want to log each step of minimization
     try:
         grammar.read_grammar_from_file(file_folder + filename)
     except FileNotFoundError:
         print('File ' + filename + ' could not be found inside grammars folder. Please check if name is correct.')
         sys.exit(1)
 
-    print('Grammar before minimization:')
-    print(grammar)
-
     grammar.minimize()
-    print('Grammar after minimization')
-    print(grammar)
 
     print('Grammar in Chomsky Normal Form')
-    cnf = ChomskyNormalForm(grammar)
+    # False is sent to 'log' parameter as we won't be logging CNF minimization
+    cnf = ChomskyNormalForm(grammar, log=False)
     print(cnf)
 
 
