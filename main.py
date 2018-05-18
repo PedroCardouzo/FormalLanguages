@@ -8,7 +8,7 @@ def main():
     file_folder = './grammars/'  # folder is test_grammars
     filename = ''  # input('name of grammar file inside grammars (default = test.txt): ')
     if filename == '':
-        filename = 'test.txt'
+        filename = '4_d.txt'
 
     grammar = Grammar()
     try:
@@ -24,6 +24,7 @@ def main():
     print('Grammar after minimization')
     print(grammar)
 
+    print('Grammar in Chomsky Normal Form')
     cnf = ChomskyNormalForm(grammar)
     print(cnf)
 
