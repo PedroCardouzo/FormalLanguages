@@ -1,5 +1,6 @@
 import sys
 from src.Grammar import *
+import src.Parser
 
 def main():
 
@@ -23,13 +24,26 @@ def main():
     except FileNotFoundError:
         print('File ' + filename + ' could not be found inside grammars folder. Please check if name is correct.')
         sys.exit(1)
-
+    '''
     print('Grammar before minimization:')
     print(grammar)
 
     grammar.minimize()
     print('Grammar after minimization')
     print(grammar)
+    '''
+
+    print(grammar)
+    cyk_parser = src.Parser.CYK(grammar)
+
+    # word for Hopcroft example grammar
+    #cyk_parser.parse('baaba')
+
+    # word for Blauth example grammar
+    #cyk_parser.parse('abaab')
+
+    # word for Wikipedia example grammar
+    cyk_parser.parse('she eats a fish with a fork')
 
 if __name__ == '__main__':
     main()
