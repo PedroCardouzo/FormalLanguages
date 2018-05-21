@@ -163,11 +163,11 @@ class Grammar:
         # check if it would generate empty symbol then add it at the end
         self.log_grammar('Original Grammar')
         self.remove_empty_productions()
-        self.log_grammar('after removing empty productions:')
+        self.log_grammar('After removing empty productions')
         self.remove_unit_productions()
-        self.log_grammar('after removing unit productions')
+        self.log_grammar('After removing unit productions')
         self.remove_useless_symbols()
-        self.log_grammar('after removing useless symbols\nMinimization Complete:')
+        self.log_grammar('After removing useless symbols\nMinimization Complete:')
 
     def remove_empty_productions(self):
         """
@@ -368,10 +368,13 @@ class Grammar:
         def variable_unit_closure(v):
             def immediate_unit_closure(v):
                 unit_productions_of_v = \
-                    [rule for rule in self.rules if \
-                     rule.head == v and is_unit_production(rule)]
-                return set(var for var in \
-                           [rule.tail[0] for rule in unit_productions_of_v])
+                    {rule for rule in self.rules if \
+                     rule.head == v and is_unit_production(rule)}
+
+                unit_production_tails_of_v = {rule.tail for rule in unit_productions_of_v}
+
+                return {tail[0] for tail in unit_production_tails_of_v}
+
 
             # set of variables which we are to return
             unit_closure_v = set() 
@@ -386,7 +389,7 @@ class Grammar:
                 immediate_closure_u = immediate_unit_closure(u)
                 for element in immediate_closure_u:
                     if not visited[element]:
-                        unit_closure_v.update(element)
+                        unit_closure_v.update((element,))
                         queue.append(element)
                 visited[u] = True
 

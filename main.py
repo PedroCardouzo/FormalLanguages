@@ -42,7 +42,11 @@ def main():
     # word for Blauth example grammar
     #cyk_parser.parse('abaab')
     # word for Wikipedia example grammar
-    cyk_parser.parse('she eats a fish with a fork')
+    #cyk_parser.parse('she eats a fish with a fork')
+
+    # word for regular expression grammar
+    #cyk_parser.parse('(x+x)*')
+    cyk_parser.parse('a')
 
 if __name__ == '__main__':
     main()
