@@ -368,13 +368,10 @@ class Grammar:
         def variable_unit_closure(v):
             def immediate_unit_closure(v):
                 unit_productions_of_v = \
-                    {rule for rule in self.rules if \
-                     rule.head == v and is_unit_production(rule)}
-
-                unit_production_tails_of_v = {rule.tail for rule in unit_productions_of_v}
-
-                return {tail[0] for tail in unit_production_tails_of_v}
-
+                    [rule for rule in self.rules if \
+                     rule.head == v and is_unit_production(rule)]
+                return set(var for var in \
+                           [rule.tail[0] for rule in unit_productions_of_v])
 
             # set of variables which we are to return
             unit_closure_v = set() 
@@ -389,7 +386,7 @@ class Grammar:
                 immediate_closure_u = immediate_unit_closure(u)
                 for element in immediate_closure_u:
                     if not visited[element]:
-                        unit_closure_v.update((element,))
+                        unit_closure_v.add(element)
                         queue.append(element)
                 visited[u] = True
 

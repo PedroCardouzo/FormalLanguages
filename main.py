@@ -45,8 +45,10 @@ def main():
     #cyk_parser.parse('she eats a fish with a fork')
 
     # word for regular expression grammar
-    #cyk_parser.parse('(x+x)*')
-    cyk_parser.parse('a')
+    #cyk_parser.parse('(b+a)*')
+
+    # word for gramatica_exemplo2.txt
+    cyk_parser.parse('the dog barks at the cat in the park')
 
 if __name__ == '__main__':
     main()
