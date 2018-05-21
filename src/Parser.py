@@ -30,7 +30,7 @@ class CYK:
         if ' ' in word:
             word = word.split(' ')
 
-        print('Word to be parsed:', word)
+        print('Parsing word:', word)
 
         self.create_table(len(word))
 
@@ -71,3 +71,4 @@ class CYK:
             return True
         else:
             return False
+

@@ -4,20 +4,17 @@ import sys # for command-line arguments
 
 # Rule = 2-uple (String, (String,)) | each String belongs to terminals or variables
 Rule = namedtuple('Rule', ['head', 'tail'])
-
+CONST_EMPTY_SYMBOL = 'ε'
 
 class Grammar:
 
-    def __init__(self, empty_symbol='V'):
-        """
-            # __init__ ::
-            Initilizes variables
-        """
+    def __init__(self, empty_symbol='V', log=False):
         self.terminals = set()
         self.variables = set()
         self.initial = None
         self.rules = set()
         self.empty_symbol = empty_symbol  # 'V' is default for empty symbol
+        self._log = log
 
     def __str__(self):
         """
@@ -35,17 +32,21 @@ class Grammar:
         #     rules
         # }
         terminals = list(self.terminals)
-        variables = list(self.variables)
         terminals.sort()
-        variables.sort()
         # places the initial variable first
-        variables = [self.initial] + [var for var in variables if var != self.initial]
+        variables = self._sort_variables_for_print()
 
         terminals_string = ', '.join(terminals)  # ['a', 'b', 'c'] -> 'a, b, c'
         variables_string = ', '.join(variables)  # ['X', 'Y', 'Z'] -> 'X, Y, Z'
         rules_string = self.__str_rules__(variables)
         return 'G = ({' + variables_string + '}, {' + terminals_string + '}, P, '\
                + self.initial + ')\nP = {\n' + rules_string + '}'
+
+    def _sort_variables_for_print(self):
+        variables = list(self.variables)
+        variables.remove(self.initial)
+        variables.sort()
+        return [self.initial] + variables
 
     def __str_rules__(self, variables):
         """
@@ -61,8 +62,11 @@ class Grammar:
             if rules_for_variable != []:
                 str_buffer += '\t' + variable + ' -> ' + ' | '.join(rules_for_variable) + '\n'
 
-        # return the formatted rule generation
-        return str_buffer
+        # if the grammar has an empty symbo, change for a more visually appealing representation
+        if self.empty_symbol is not None:
+            return str_buffer.replace(self.empty_symbol, CONST_EMPTY_SYMBOL)
+        else:
+            return str_buffer  # else just return the formatted rules string
 
     def read_grammar_from_file(self, filepath):
         """
@@ -144,15 +148,26 @@ class Grammar:
 
         return True
 
+    def log_grammar(self, string='Grammar:'):
+        if self._log:
+            print(string)
+            print(self)
+
     def minimize(self):
         """
-            Minimizes
+            Minimizes:
+              - Removes empty productions 
+              - Removes unit productions
+              - Removes useless symbols (i.e. unreachable & non-generating)
         """
         # check if it would generate empty symbol then add it at the end
-
+        self.log_grammar('Original Grammar')
         self.remove_empty_productions()
+        self.log_grammar('after removing empty productions:')
         self.remove_unit_productions()
+        self.log_grammar('after removing unit productions')
         self.remove_useless_symbols()
+        self.log_grammar('after removing useless symbols\nMinimization Complete:')
 
     def remove_empty_productions(self):
         """
