@@ -29,8 +29,11 @@ class CYK:
         # As such, we separate the sentence into a list of terminal "words"
         if ' ' in word:
             word = word.split(' ')
+            word_or_sentence = 'sentence'
+        else:
+            word_or_sentence = 'word'
 
-        print('Parsing word:', word)
+        print('\nParsing',word_or_sentence,':', word)
 
         self.create_table(len(word))
 
@@ -68,7 +71,9 @@ class CYK:
         self.print_table(len(word))
 
         if self.grammar.initial in self.table[(0, len(word)-1)]:
+            print('Grammar generates',word_or_sentence,word)
             return True
         else:
+            print('Grammar doesn\'t generate',word_or_sentence,word)
             return False
 
