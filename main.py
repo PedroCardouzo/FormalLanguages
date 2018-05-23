@@ -1,7 +1,6 @@
 import sys
 from src.Grammar import *
-from src.ChomskyNormalForm import ChomskyNormalForm
-from src.Parser import CYK
+from src.Parser import Parser
 
 def main():
 
@@ -27,14 +26,9 @@ def main():
         print('File ' + filename + ' could not be found inside grammars folder. Please check if name is correct.')
         sys.exit(1)
 
-    grammar.minimize()
+    grammar
 
-    print('Grammar in Chomsky Normal Form')
-    # False is sent to 'log' parameter as we won't be logging CNF minimization
-    cnf = ChomskyNormalForm(grammar, log=False)
-    print(cnf)
-
-    cyk_parser = CYK(cnf)
+    cyk_parser = Parser(grammar)
 
     # word for Hopcroft example grammar
     #cyk_parser.parse('baaba')
@@ -46,6 +40,7 @@ def main():
 
     # word for regular expression grammar
     #cyk_parser.parse('(b+a)*')
+    #cyk_parser.parse('(b+a)')
     #cyk_parser.parse('( empty + a ) *')
     #cyk_parser.parse('(ba)')
 
