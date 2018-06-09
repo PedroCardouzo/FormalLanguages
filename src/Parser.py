@@ -2,24 +2,14 @@ import src.Grammar
 from src.ChomskyNormalForm import ChomskyNormalForm
 from copy import deepcopy
 
-#from pprint import pprint
-
 class CYKTable:
     def __init__(self, grammar, word):
         self.word = word
-        self.grammar = self.prepare_grammar(grammar)
+        self.grammar = grammar
         self.table = None
-        accepts = self.build_table()
+        self.accepts = self.build_table()
 
-    def prepare_grammar(self, grammar):
-        '''
-            Returns a version of the grammar parameter that is
-            first minimized, and then converted to Chomsky normal form.
-        '''
-        minimized_grammar = deepcopy(grammar)
-        minimized_grammar.minimize()
-        cnf_grammar = ChomskyNormalForm(minimized_grammar, log=False)
-        return cnf_grammar
+
 
     def init_table(self):
         self.table = dict()
@@ -27,13 +17,16 @@ class CYKTable:
             for s in range(len(self.word) - r):
                 self.table[(r, s)] = set()
     
-    def print_cell_label(self, r, s):
-        print('V'+'('+'r='+ str(r) +','+'s='+ str(s)+')')
 
     def print_table(self):
+        rows = []
         for s in reversed(range(len(self.word))):
-            row = [self.table[(r, s)] for r in range(len(self.word)- s)]
-            print('Row', s,':',row)
+            rows.append( [self.table[(r, s)] for r in range(len(self.word)- s)] )
+            #print('Row', s,':',row)
+
+        for row in rows:
+            print(row)
+
 
     def build_table(self):
         # If word has spaces within it, we consider it to be a "sentence".
@@ -93,14 +86,26 @@ class CYKTable:
             print('Grammar doesn\'t generate',word_or_sentence,self.word)
             return False
 
+
+
 class Parser:
-    
-    def __init__(self, grammar):
+    def __init__(self, grammar, log_grammar_preparation=False):
         self.grammar = grammar
+        self.prepare_grammar_for_cyk(log_grammar_preparation)
 
     def parse(self, word):
         cyk_table = CYKTable(self.grammar, word)
 
+        return cyk_table.accepts
 
-    
+    def prepare_grammar_for_cyk(self, log):
+        '''
+        Converts grammar to Chomsky normal form.
+        '''
+        grammar_copy = deepcopy(self.grammar)
+        cnf_grammar = ChomskyNormalForm(grammar_copy, log)
+        print('Grammar in Chomsky normal form')
+        print(cnf_grammar)
+
+        self.grammar = cnf_grammar
 

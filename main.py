@@ -28,10 +28,10 @@ def main():
 
     grammar
 
-    cyk_parser = Parser(grammar)
+    cyk_parser = Parser(grammar, log_grammar_preparation=True)
 
     # word for Hopcroft example grammar
-    #cyk_parser.parse('baaba')
+    cyk_parser.parse('baaba')
 
     # word for Blauth example grammar
     #cyk_parser.parse('abaab')
@@ -45,8 +45,8 @@ def main():
     #cyk_parser.parse('(ba)')
 
     # word for gramatica_exemplo2.txt
-    cyk_parser.parse('the dog barks at the cat in the park')
-    cyk_parser.parse('runs barks the cat eats a dog')
+    #cyk_parser.parse('the dog barks at the cat in the park')
+    #cyk_parser.parse('runs barks the cat eats a dog')
 
 if __name__ == '__main__':
     main()
