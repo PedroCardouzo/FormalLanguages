@@ -32,6 +32,8 @@ def main():
 
     # word for Hopcroft example grammar
     cyk_parser.parse('baaba')
+    # example access to parser's cyk_table
+    cyk_parser.cyk_table.print_table()
 
     # word for Blauth example grammar
     #cyk_parser.parse('abaab')

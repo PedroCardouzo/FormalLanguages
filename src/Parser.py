@@ -92,11 +92,12 @@ class Parser:
     def __init__(self, grammar, log_grammar_preparation=False):
         self.grammar = grammar
         self.prepare_grammar_for_cyk(log_grammar_preparation)
+        self.cyk_table = None
 
     def parse(self, word):
-        cyk_table = CYKTable(self.grammar, word)
+        self.cyk_table = CYKTable(self.grammar, word)
 
-        return cyk_table.accepts
+        return self.cyk_table.accepts
 
     def prepare_grammar_for_cyk(self, log):
         '''
