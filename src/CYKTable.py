@@ -1,6 +1,7 @@
 import src.Grammar
 from src.ChomskyNormalForm import ChomskyNormalForm
 from copy import deepcopy
+from pprint import pprint
 
 
 class CYKTable:
@@ -170,6 +171,11 @@ class Parser:
     def parse(self, word):
         self.cyk_table = CYKTable(self.grammar, word)
 
+        if self.cyk_table.accepts:
+            print('Word accepted. Extracting parse trees...')
+            parse_trees = self.cyk_table.extract_all_parse_trees(pretty_print=False)
+            pprint(parse_trees)
+
         return self.cyk_table.accepts
 
     def prepare_grammar_for_cyk(self, log):
@@ -179,6 +185,5 @@ class Parser:
         grammar_copy = deepcopy(self.grammar)
         cnf_grammar = ChomskyNormalForm(grammar_copy, log)
         print('Grammar in Chomsky normal form')
-        # print(cnf_grammar)
-        #
-        # self.grammar = cnf_grammar
+        print(cnf_grammar)
+        self.grammar = cnf_grammar
