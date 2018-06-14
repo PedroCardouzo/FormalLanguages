@@ -126,7 +126,7 @@ class CYKTable:
         return acc
 
     def extract_all_parse_trees(self, pretty_print=False):
-        tree = self.gen_tree('S', (0, len(self.word)-1))
+        tree = self.gen_tree(self.grammar.initial, (0, len(self.word)-1))
         data = self.extract_all(tree)
 
         if pretty_print:
