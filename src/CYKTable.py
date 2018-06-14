@@ -176,9 +176,9 @@ class Parser:
         '''
         Converts grammar to Chomsky normal form.
         '''
-        # grammar_copy = deepcopy(self.grammar)
-        # cnf_grammar = ChomskyNormalForm(grammar_copy, log)
-        # print('Grammar in Chomsky normal form')
+        grammar_copy = deepcopy(self.grammar)
+        cnf_grammar = ChomskyNormalForm(grammar_copy, log)
+        print('Grammar in Chomsky normal form')
         # print(cnf_grammar)
         #
         # self.grammar = cnf_grammar

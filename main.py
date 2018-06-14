@@ -18,17 +18,9 @@ def main():
         print('File ' + filename + ' could not be found inside grammars folder. Please check if name is correct.')
         sys.exit(1)
 
-    grammar.minimize()
-
-    print('Grammar in Chomsky Normal Form')
     # False is sent to 'log' parameter as we won't be logging CNF minimization
-    cnf = ChomskyNormalForm(grammar, log=False)
-    print(cnf)
-    print('CYK DUDE')
-    cyk_parser = Parser(cnf, False)
+    cyk_parser = Parser(grammar, False)
     cyk_parser.parse('abaab')
-    cyk_parser.cyk_table.print_table()
-
     cyk_parser.cyk_table.extract_all_parse_trees(pretty_print=True)
 
     #for c in tree.children:
