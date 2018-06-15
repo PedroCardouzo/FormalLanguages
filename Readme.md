@@ -5,15 +5,18 @@
 
 ### Usage:
 
-#### Providing grammar and single input without spaces
+#### Providing grammar and single input without spaces:
 ``` $ python main.py grammars/grammar_name.txt this_is_a_word ```
 
-#### Providing grammar and single input with spaces (use quote marks)
+
+#### Providing grammar and single input with spaces (use quote marks):
 ```$ python main.py grammars/grammar_name.txt "this is a sentence"```
 
-#### Providing just grammar, with inputs provided in the program
+
+#### Providing just grammar, with inputs provided in the program:
 ```$ python main.py grammars/grammar_name.txt```
 
-#### Running the program without command-line arguments, providing grammar and input within the program
+
+#### Running the program without command-line arguments, providing grammar and input within the program:
 
 ```$ python main.py```
