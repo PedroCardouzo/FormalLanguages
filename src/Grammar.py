@@ -309,7 +309,7 @@ class Grammar:
                 immediate_closure_u = immediate_unit_closure(u)
                 for element in immediate_closure_u:
                     if not visited[element]:
-                        unit_closure_v.update(element)
+                        unit_closure_v.add(element)
                         queue.append(element)
                 visited[u] = True
 
