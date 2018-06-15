@@ -9,7 +9,7 @@ def main():
     file_folder = './grammars/'  # folder is test_grammars
     filename = ''  # input('name of grammar file inside grammars (default = test.txt): ')
     if filename == '':
-        filename = 't.txt'
+        filename = '4_a.txt'
 
     grammar = Grammar(log=True)  # True is sent to 'log' as we want to log each step of minimization
     try:

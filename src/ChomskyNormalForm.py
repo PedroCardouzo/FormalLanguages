@@ -22,7 +22,6 @@ class ChomskyNormalForm(Grammar):
         self.terminals = grammar.terminals
         self.rules = grammar.rules
         self.initial = grammar.initial
-        self.empty_symbol = None
         self._log = log
 
         # creates variable generator for when we will make new variables for achieving Chomsky Normal Form
