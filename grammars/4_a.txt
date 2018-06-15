@@ -1,29 +1,24 @@
 #Terminais						# A secao de simbolos terminais eh a primeira do arquivo.
 [ a ]							# Tudo o que estiver apos o sustenido (#) sera considerado comentario
 [ b ]							# Os simbolos terminais sao qualquer sequencia de caracteres (nao reservados) entre colchetes.
-[ u ]							# A secao de simbolos terminais inicia com a palavra-chave "Terminais"
-[ v ]
+[ c ]							# A secao de simbolos terminais inicia com a palavra-chave "Terminais"
 #Variaveis						# A secao de variaveis inicia pela palavra reservada "Variaveis", e eh a segunda do arquivo
 [ S ]							# Eh muito importante respeitar a ordem das secoes
-[ Z ]							# Note que a sintaxe eh case-sensitive, isto eh, maiusculas e minusculas sao diferenciadas
+[ A ]							# Note que a sintaxe eh case-sensitive, isto eh, maiusculas e minusculas sao diferenciadas
 [ B ]
-[ X ]
-[ Y ]
-[ A ]
+[ C ]
 #Inicial						# O simbolo inicial possui uma secao propria, iniciada pela palavra "Inicial"
 [ S ]							# Essa secao possui apenas uma linha com o simbolo inicial entre colchetes.
 #Regras							# A ultima secao vem encabecada pela palavra-chave "Regras"
-[ S ] > [ X ] [ Y ] [ Z ]		# O simbolo de ">" representa a derivacao.
-[ A ] > [ a ]
+[ S ] > [ A ] [ B ]
+[ S ] > [ S ] [ C ] [ B ]
+
+[ A ] > [ a ] [ A ]
+[ A ] > [ C ]
+
+[ B ] > [ b ] [ B ]
 [ B ] > [ b ]
-[ X ] > [ A ] [ X ] [ A ]		# Os simbolos da direita estão cada um entre colchetes e separados por espacos.
-[ X ] > [ B ] [ X ] [ B ]
-[ X ] > [ Z ]
-[ X ] > [ V ]					# V eh a palavra vazia.
-[ Y ] > [ A ] [ Y ] [ B ]
-[ Y ] > [ B ] [ Y ] [ A ]
-[ Y ] > [ Z ]
-[ Y ] > [ V ] 
-[ Z ] > [ Z ] [ u ] 
-[ Z ] > [ Z ] [ v ]
-[ Z ] > [ V ]
+
+[ C ] > [ c ] [ C ]
+[ C ] > [ V ]
+
