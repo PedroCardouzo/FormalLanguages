@@ -1,6 +1,7 @@
 import src.Grammar
 from src.ChomskyNormalForm import ChomskyNormalForm
 from copy import deepcopy
+from pprint import pprint
 
 
 class CYKTable:
@@ -26,15 +27,11 @@ class CYKTable:
             print(row)
 
     def build_table(self):
-        # If word has spaces within it, we consider it to be a "sentence".
-        # As such, we separate the sentence into a list of terminal "words"
+        # Tokenization:
+        #   If word has spaces within it, we consider it to be a "sentence".
+        #   As such, we separate the sentence into a list of terminal "words"
         if ' ' in self.word:
             self.word = self.word.split(' ')
-            word_or_sentence = 'sentence'
-        else:
-            word_or_sentence = 'word'
-
-        print('\nParsing', word_or_sentence, ':', self.word)
 
         self.init_table()
 
@@ -69,16 +66,10 @@ class CYKTable:
                                                for tail in possible_tails if \
                                                rule.tail == tail})
 
-        print('Expected table size:', len(self.word) * (len(self.word) + 1) / 2)
-        print('Actual table size:', len(self.table))
-        print('Table state after parse:')
-        self.print_table()
 
         if self.grammar.initial in self.table[(0, len(self.word) - 1)]:
-            print('Grammar generates', word_or_sentence, self.word)
             return True
         else:
-            print('Grammar doesn\'t generate', word_or_sentence, self.word)
             return False
 
     def gen_iterator(self, c, l):
@@ -126,7 +117,7 @@ class CYKTable:
         return acc
 
     def extract_all_parse_trees(self, pretty_print=False):
-        tree = self.gen_tree('S', (0, 4))
+        tree = self.gen_tree(self.grammar.initial, (0, len(self.word)-1))
         data = self.extract_all(tree)
 
         if pretty_print:
@@ -169,17 +160,46 @@ class Parser:
         self.cyk_table = None
 
     def parse(self, word):
+        # ------------------- Table construction -------------------
         self.cyk_table = CYKTable(self.grammar, word)
+        self.table_construction_report(word)
 
-        return self.cyk_table.accepts
+        
+        # ------------------- Parse tree extraction -------------------
+        if self.cyk_table.accepts: 
+            print('Extracting parse trees...')
+            parse_trees = self.cyk_table.extract_all_parse_trees(pretty_print=False)
+            pprint(parse_trees)
+            return parse_trees
+
+        else:
+            print('Cannot extract parse trees.')
+            return None
+
+
+    def table_construction_report(self, word):
+        if ' ' in word:
+            word_or_sentence = 'sentence'
+        else:
+            word_or_sentence = 'word'
+        print('\nParsing', word_or_sentence, ':', word)
+
+        print('Expected table size:', len(word) * (len(word) + 1) / 2)
+        print('Actual table size:', len(self.cyk_table.table))
+        print('Table state after parse:')
+        self.cyk_table.print_table()
+
+        if self.cyk_table.accepts:
+            print('Grammar generates', word_or_sentence, word + '.\n')
+        else:
+            print('Grammar does not generate', word_or_sentence, word + '.\n')
 
     def prepare_grammar_for_cyk(self, log):
         '''
         Converts grammar to Chomsky normal form.
         '''
-        # grammar_copy = deepcopy(self.grammar)
-        # cnf_grammar = ChomskyNormalForm(grammar_copy, log)
-        # print('Grammar in Chomsky normal form')
-        # print(cnf_grammar)
-        #
-        # self.grammar = cnf_grammar
+        grammar_copy = deepcopy(self.grammar)
+        cnf_grammar = ChomskyNormalForm(grammar_copy, log)
+        print('Grammar in Chomsky normal form')
+        print(cnf_grammar)
+        self.grammar = cnf_grammar
