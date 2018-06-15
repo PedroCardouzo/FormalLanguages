@@ -132,13 +132,13 @@ class Node:
 
     def __str__(self, deepness=0):
         padding = '    '
-        s = deepness * padding + '(' + self.value + '\n'
+        s = deepness * padding + self.value + '\n'
         for c in self.children:
             if type(c) is tuple:
                 s += c[0].__str__(deepness+1) + '\n' + c[1].__str__(deepness+1) + '\n'
             else:
                 s += (deepness+1)* padding + c.value
-        return s + '\n' + deepness * padding + ')'
+        return s 
         #if self.children != []:
         #    return 'value = ' + str(self.value) + '\nchildren = ' + str([c[0].__str__() + '\n' + c[1].__str__() for c in self.children])
         #else:
