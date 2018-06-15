@@ -32,7 +32,8 @@ def main():
 
     grammar = Grammar(log=True)  # True is sent to 'log' as we want to log each step of minimization
     try:
-        grammar.read_grammar_from_file(get_grammar_filename())
+        filename = get_grammar_filename()
+        grammar.read_grammar_from_file(filename)
     except FileNotFoundError:
         print('File ' + filename + ' could not be found inside grammars folder. Please check if name is correct.')
         sys.exit(1)
@@ -50,7 +51,7 @@ def main():
             if word:
                 cyk_parser.parse(word)
             else:
-                print('No word entered this time.')
+                print('\nNo word entered this time.')
 
     print('\nSEE YOU SPACE COWBOY...\n')
 
