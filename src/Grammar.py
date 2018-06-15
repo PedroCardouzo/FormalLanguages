@@ -48,11 +48,11 @@ class Grammar:
             if rules_for_variable != []:
                 str_buffer += '\t' + variable + ' -> ' + ' | '.join(rules_for_variable) + '\n'
 
-        # if the grammar has an empty symbo, change for a more visually appealing representation
-        if self.empty_symbol is not None:
-            return str_buffer.replace(self.empty_symbol, CONST_EMPTY_SYMBOL)
-        else:
-            return str_buffer  # else just return the formatted rules string
+        # if the grammar has an empty symbol, change for a more visually appealing representation
+        # if self.empty_symbol is not None:
+        #    return str_buffer.replace(self.empty_symbol, CONST_EMPTY_SYMBOL)
+        # else:
+        return str_buffer  # else just return the formatted rules string
 
     def read_grammar_from_file(self, filepath):
         buffer = []  # buffer slots
