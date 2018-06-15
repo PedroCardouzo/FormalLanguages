@@ -168,8 +168,7 @@ class Parser:
         # ------------------- Parse tree extraction -------------------
         if self.cyk_table.accepts: 
             print('Extracting parse trees...')
-            parse_trees = self.cyk_table.extract_all_parse_trees(pretty_print=False)
-            pprint(parse_trees)
+            parse_trees = self.cyk_table.extract_all_parse_trees(pretty_print=True)
             return parse_trees
 
         else:
