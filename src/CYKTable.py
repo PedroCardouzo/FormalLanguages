@@ -197,7 +197,7 @@ class Parser:
             word_or_sentence = 'word'
         print('\nParsing', word_or_sentence, ':', word)
 
-        print('Expected table size:', len(word) * (len(word) + 1) / 2)
+        print('Expected table size:', len(word.split(' ')) * (len(word.split(' ')) + 1) / 2)
         print('Actual table size:', len(self.cyk_table.table))
         print('Table state after parse:')
         self.cyk_table.print_table()
