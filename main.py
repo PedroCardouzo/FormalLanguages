@@ -9,7 +9,7 @@ def main():
     file_folder = './grammars/'  # folder is test_grammars
     filename = ''  # input('name of grammar file inside grammars (default = test.txt): ')
     if filename == '':
-        filename = '4_a.txt'
+        filename = 'cyk_example_Wikipedia.txt'
 
     grammar = Grammar(log=True)  # True is sent to 'log' as we want to log each step of minimization
     try:
@@ -19,7 +19,7 @@ def main():
         sys.exit(1)
 
     cyk_parser = Parser(grammar, log_grammar_preparation=True)
-    cyk_parser.parse('abaab')
+    cyk_parser.parse('she eats a fish with a fork')
 
     #for c in tree.children:
      #   print('*'*30)

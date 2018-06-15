@@ -11,7 +11,7 @@
 [ NP ]
 [ PP ]
 [ Det ]
-[ V ]
+[ VB ]
 [ P ]
 [ N ]
 
@@ -20,12 +20,12 @@
 #Regras							# A ultima secao vem encabecada pela palavra-chave "Regras"
 [ S ] > [ NP ] [ VP ]
 [ VP ] > [ VP ] [ PP ]
-[ VP ] > [ V ] [ NP ]
+[ VP ] > [ VB ] [ NP ]
 [ VP ] > [ eats ]
 [ PP ] > [ P ] [ NP ]
 [ NP ] > [ Det ] [ N ]
 [ NP ] > [ she ]
-[ V ] > [ eats ]
+[ VB ] > [ eats ]
 [ P ] > [ with ]
 [ N ] > [ fish ]
 [ N ] > [ fork ]
