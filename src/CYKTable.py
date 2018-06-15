@@ -120,9 +120,9 @@ class CYKTable:
             if type(child) is tuple:
                 aux1 = cls.extract_all(child[0])
                 aux2 = cls.extract_all(child[1])
-                acc += [node.value + ' -> ' + str(x) for x in cls.combinations(aux1, aux2)]
+                acc += [Node(node.value, x) for x in cls.combinations(aux1, aux2)]
             else:
-                acc.append(node.value + ' -> ' + child.value)
+                acc.append(Node(node.value, child))
         return acc
 
     def extract_all_parse_trees(self, pretty_print=False):
@@ -130,16 +130,17 @@ class CYKTable:
         data = self.extract_all(tree)
 
         if pretty_print:
-            print(data)  # do something better
-        return data
+            for el in data:
+                print(el)  # print each possible tree
+        return data  # return the tree
+
 
 class Node:
-    def __init__(self, value, terminal=None):
+    def __init__(self, value, generated=None):
         self.value = value  # str
         self.children = []  # [(Node, Node)] | [Node] if Node.value is terminal
-        if terminal is not None:
-            # if terminal in self.grammar.terminals: provide some way to check terminals
-            self.children.append(terminal)
+        if generated is not None:
+            self.children.append(generated)
 
     def __str__(self, deepness=0):
         s = deepness*'\t' + self.value + '\n'
