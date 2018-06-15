@@ -120,17 +120,6 @@ class CYKTable:
         tree = self.gen_tree(self.grammar.initial, (0, len(self.word)-1))
         data = self.extract_all(tree)
 
-        if pretty_print:
-            current_tree_count = 0
-            if(len(data)) == 1:
-                tree_plural_singular = 'tree'
-            else:
-                tree_plural_singular = 'trees'
-            print('Printing ' + str(len(data)) + ' parse trees...')
-            for el in data:
-                print('Parse tree ' + str(current_tree_count) +':')
-                current_tree_count += 1
-                print(el)  # print each possible tree
         return data  # return the tree
 
 
@@ -168,7 +157,7 @@ class Parser:
         self.prepare_grammar_for_cyk(log_grammar_preparation)
         self.cyk_table = None
 
-    def parse(self, word):
+    def parse(self, word, print_parse_trees=True):
         # ------------------- Table construction -------------------
         self.cyk_table = CYKTable(self.grammar, word)
         self.table_construction_report(word)
@@ -178,12 +167,28 @@ class Parser:
         if self.cyk_table.accepts: 
             print('Extracting parse trees...')
             parse_trees = self.cyk_table.extract_all_parse_trees(pretty_print=True)
+
+            if print_parse_trees:
+                self.print_parse_trees(parse_trees)
+
+
             return parse_trees
 
         else:
             print('Cannot extract parse trees.')
             return None
 
+    def print_parse_trees(self, parse_trees):
+        current_tree_count = 0
+        if(len(parse_trees)) == 1:
+            tree_plural_singular = 'tree'
+        else:
+            tree_plural_singular = 'trees'
+        print('Printing ' + str(len(parse_trees)) + ' parse trees...')
+        for tree in parse_trees:
+            print('Parse tree ' + str(current_tree_count) +':')
+            current_tree_count += 1
+            print(tree)  # print each possible tree
 
     def table_construction_report(self, word):
         if ' ' in word:
