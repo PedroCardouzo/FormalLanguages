@@ -54,10 +54,6 @@ def main():
 
     print('\nSEE YOU SPACE COWBOY...\n')
 
-    #for c in tree.children:
-     #   print('*'*30)
-      #  print(c[0].__str__() + '\n' + c[1].__str__())
-       # print('*'*30)
 
 
 

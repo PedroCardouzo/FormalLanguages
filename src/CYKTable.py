@@ -203,9 +203,9 @@ class Parser:
         self.cyk_table.print_table()
 
         if self.cyk_table.accepts:
-            print('Grammar generates', word_or_sentence, word + '.\n')
+            print('Grammar generates', word_or_sentence, '\"' + word + '\"' + '.\n')
         else:
-            print('Grammar does not generate', word_or_sentence, word + '.\n')
+            print('Grammar does not generate', word_or_sentence, '\"' + word + '\"' + '.\n')
 
     def prepare_grammar_for_cyk(self, log):
         '''
