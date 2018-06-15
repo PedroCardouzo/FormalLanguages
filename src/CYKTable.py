@@ -121,7 +121,15 @@ class CYKTable:
         data = self.extract_all(tree)
 
         if pretty_print:
+            current_tree_count = 0
+            if(len(data)) == 1:
+                tree_plural_singular = 'tree'
+            else:
+                tree_plural_singular = 'trees'
+            print('Printing ' + str(len(data)) + ' parse trees...')
             for el in data:
+                print('Parse tree ' + str(current_tree_count) +':')
+                current_tree_count += 1
                 print(el)  # print each possible tree
         return data  # return the tree
 
@@ -134,13 +142,14 @@ class Node:
             self.children.append(generated)
 
     def __str__(self, deepness=0):
-        s = deepness*'\t' + self.value + '\n'
+        padding = '    '
+        s = deepness * padding + '(' + self.value + '\n'
         for c in self.children:
             if type(c) is tuple:
                 s += c[0].__str__(deepness+1) + '\n' + c[1].__str__(deepness+1) + '\n'
             else:
-                s += (deepness+1)*'\t' + c.value
-        return s
+                s += (deepness+1)* padding + c.value
+        return s + '\n' + deepness * padding + ')'
         #if self.children != []:
         #    return 'value = ' + str(self.value) + '\nchildren = ' + str([c[0].__str__() + '\n' + c[1].__str__() for c in self.children])
         #else:
