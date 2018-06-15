@@ -120,9 +120,6 @@ class CYKTable:
         tree = self.gen_tree(self.grammar.initial, (0, len(self.word)-1))
         data = self.extract_all(tree)
 
-        if pretty_print:
-            for el in data:
-                print(el)  # print each possible tree
         return data  # return the tree
 
 
@@ -134,13 +131,14 @@ class Node:
             self.children.append(generated)
 
     def __str__(self, deepness=0):
-        s = deepness*'\t' + self.value + '\n'
+        padding = '    '
+        s = deepness * padding + self.value + '\n'
         for c in self.children:
             if type(c) is tuple:
                 s += c[0].__str__(deepness+1) + '\n' + c[1].__str__(deepness+1) + '\n'
             else:
-                s += (deepness+1)*'\t' + c.value
-        return s
+                s += (deepness+1)* padding + c.value
+        return s 
         #if self.children != []:
         #    return 'value = ' + str(self.value) + '\nchildren = ' + str([c[0].__str__() + '\n' + c[1].__str__() for c in self.children])
         #else:
@@ -159,7 +157,7 @@ class Parser:
         self.prepare_grammar_for_cyk(log_grammar_preparation)
         self.cyk_table = None
 
-    def parse(self, word):
+    def parse(self, word, print_parse_trees=True):
         # ------------------- Table construction -------------------
         self.cyk_table = CYKTable(self.grammar, word)
         self.table_construction_report(word)
@@ -168,13 +166,29 @@ class Parser:
         # ------------------- Parse tree extraction -----------dd--------
         if self.cyk_table.accepts: 
             print('Extracting parse trees...')
-            parse_trees = self.cyk_table.extract_all_parse_trees(pretty_print=False)
+            parse_trees = self.cyk_table.extract_all_parse_trees(pretty_print=True)
+
+            if print_parse_trees:
+                self.print_parse_trees(parse_trees)
+
+
             return parse_trees
 
         else:
             print('Cannot extract parse trees.')
             return None
 
+    def print_parse_trees(self, parse_trees):
+        current_tree_count = 0
+        if(len(parse_trees)) == 1:
+            tree_plural_singular = 'tree'
+        else:
+            tree_plural_singular = 'trees'
+        print('Printing ' + str(len(parse_trees)) + ' parse trees...')
+        for tree in parse_trees:
+            print('Parse tree ' + str(current_tree_count) +':')
+            current_tree_count += 1
+            print(tree)  # print each possible tree
 
     def table_construction_report(self, word):
         if ' ' in word:
@@ -183,15 +197,15 @@ class Parser:
             word_or_sentence = 'word'
         print('\nParsing', word_or_sentence, ':', word)
 
-        print('Expected table size:', len(word) * (len(word) + 1) / 2)
+        print('Expected table size:', len(word.split(' ')) * (len(word.split(' ')) + 1) / 2)
         print('Actual table size:', len(self.cyk_table.table))
         print('Table state after parse:')
         self.cyk_table.print_table()
 
         if self.cyk_table.accepts:
-            print('Grammar generates', word_or_sentence, word + '.\n')
+            print('Grammar generates', word_or_sentence, '\"' + word + '\"' + '.\n')
         else:
-            print('Grammar does not generate', word_or_sentence, word + '.\n')
+            print('Grammar does not generate', word_or_sentence, '\"' + word + '\"' + '.\n')
 
     def prepare_grammar_for_cyk(self, log):
         '''

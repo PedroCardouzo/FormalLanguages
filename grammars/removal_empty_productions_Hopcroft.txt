@@ -1,0 +1,18 @@
+#Terminais						# A secao de simbolos terminais eh a primeira do arquivo.
+[ a ]
+[ b ]
+#Variaveis						# A secao de variaveis inicia pela palavra reservada "Variaveis", e eh a segunda do arquivo
+[ S ]
+[ A ]
+[ B ]
+#Inicial						# O simbolo inicial possui uma secao propria, iniciada pela palavra "Inicial"
+[ S ]							# Essa secao possui apenas uma linha com o simbolo inicial entre colchetes.
+#Regras							# A ultima secao vem encabecada pela palavra-chave "Regras"
+[ S ] > [ A ] [ B ]
+
+[ A ] > [ a ] [ A ] [ A ]
+[ A ] > [ V ]
+
+[ B ] > [ b ] [ B ] [ B ]
+[ B ] > [ V ]
+
