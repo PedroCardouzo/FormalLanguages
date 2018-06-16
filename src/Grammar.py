@@ -1,6 +1,5 @@
 from collections import namedtuple
 from collections import deque  # used for BFS in Grammar.remove_unit_productions
-import re
 import sys # for command-line arguments
 
 # Rule = 2-uple (String, (String,)) | each String belongs to terminals or variables
