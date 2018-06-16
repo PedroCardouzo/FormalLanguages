@@ -165,8 +165,8 @@ class Parser:
         self.table_construction_report(word)
 
         
-        # ------------------- Parse tree extraction -----------dd--------
-        if self.cyk_table.accepts: 
+        # ------------------- Parse tree extraction -------------------
+        if self.cyk_table.accepts:
             print('Extracting parse trees...')
             parse_trees = self.cyk_table.extract_all_parse_trees(pretty_print=False)
             return parse_trees
